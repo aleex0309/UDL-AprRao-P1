@@ -281,7 +281,63 @@ public class TreasureFinder {
             // to Gamma to then be able to infer new NOT possible positions
 
             // CALL your functions HERE
+
+            processSensorValue(x, y, sensorValue);
         }
+    }
+
+    /**
+     * According to the assignment:
+     * value = 1 -> Set all cells but "+" around agent as not possible
+     * value = 2 -> Set all cells but the square corners around the agent as not
+     * possible
+     * value = 3 -> Set 9 cells around the agent as not possible
+     * 
+     * @param value Value of the sensor
+     * @param x     X pos of the agent
+     * @param y     Y pos of the agent
+     */
+    private void processSensorValue(int x, int y, int value) {
+        switch (value) {
+            case 1: {
+                setCrossToX(x, y);
+            }
+                ;
+            case 2: {
+                setCornersToX(x, y);
+            }
+                ;
+            case 3: {
+                // Case 3 can be achieved by combining case 1 and 2
+                setCrossToX(x, y);
+                setCornersToX(x, y);
+            }
+        }
+    }
+
+    private void setCrossToX(int x, int y) {
+        /*
+         * X?X
+         * ???
+         * X?X
+         */
+        tfstate.set(x, y, "X");
+        tfstate.set(x, y - 1, "X");
+        tfstate.set(x, y + 1, "X");
+        tfstate.set(x - 1, y, "X");
+        tfstate.set(x + 1, y, "X");
+    }
+
+    private void setCornersToX(int x, int y) {
+        /*
+         * ?X?
+         * XXX
+         * ?X?
+         */
+        tfstate.set(x - 1, y - 1, "X");
+        tfstate.set(x + 1, y + 1, "X");
+        tfstate.set(x - 1, y + 1, "X");
+        tfstate.set(x + 1, y - 1, "X");
     }
 
     /**
