@@ -399,11 +399,11 @@ public class TreasureFinder {
      **/
     public ISolver buildGamma() throws UnsupportedEncodingException,
             FileNotFoundException, IOException, ContradictionException {
-        int totalNumVariables;
+        // N * N * 2 (past, future) + 3(sensors)
+        int totalNumVariables = WorldLinealDim * 2 + 3;
 
         // You must set this variable to the total number of boolean variables
         // in your formula Gamma
-        // totalNumVariables = ??
         solver = SolverFactory.newDefault();
         solver.setTimeout(3600);
         solver.newVar(totalNumVariables);
@@ -413,8 +413,55 @@ public class TreasureFinder {
 
         // call here functions to add the different sets of clauses
         // of Gamma to the solver object
+        addWorldClauses(WorldLinealDim);
+        addDetectorClauses(3);
 
         return solver;
+    }
+
+    /**
+     * Generates and adds to the solver all the detector clauses
+     * 
+     * @param detectorCount the number of detectors in the agent
+     */
+    private void addDetectorClauses(int detectorCount) {
+        // Generate dectector clauses
+        VecInt pastClause = new VecInt();
+        DetectorOffset = actualLiteral;
+        for (int i = 0; i < detectorCount; i++) {
+            pastClause.insertFirst(actualLiteral);
+            actualLiteral++;
+        }
+    }
+
+    /**
+     * Adds all the world clauses where the treasure can be
+     * In past and future
+     * 
+     * @param dimensions The number of cells of the world N*N
+     * @throws ContradictionException
+     */
+    private void addWorldClauses(int dimensions) throws ContradictionException {
+
+        // Generate past clauses
+        VecInt pastClause = new VecInt();
+        TreasurePastOffset = actualLiteral;
+        for (int i = 0; i < dimensions; i++) {
+            pastClause.insertFirst(actualLiteral);
+            actualLiteral++;
+        }
+
+        // Generate future clauses
+        VecInt futureClause = new VecInt();
+        TreasureFutureOffset = actualLiteral;
+        for (int i = 0; i < dimensions; i++) {
+            futureClause.insertFirst(actualLiteral);
+            actualLiteral++;
+        }
+
+        // Add clauses to solver
+        solver.addClause(pastClause);
+        solver.addClause(futureClause);
     }
 
     /**
