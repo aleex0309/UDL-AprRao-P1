@@ -13,12 +13,15 @@ import org.sat4j.reader.*;
 
 **/
 public class TreasureWorld {
+    static int wDim;
+    static int numSteps;
+    static String fileSteps;
 
 
 
 /**
    This function should execute the sequence of steps stored in the file fileSteps,
-   but only up to numSteps steps. Each step must be executed with function 
+   but only up to numSteps steps. Each step must be executed with function
    runNextStep() of the BarcenasFinder agent.
 
    @param wDim the dimension of world
@@ -37,12 +40,18 @@ public static void runStepsSequence( int wDim, int tX, int tY,
 
 
    // Set environment object, and load list of pirate positions
- 
+
 
    // load list of steps into the Finder Agent
-    
-    
+    EnvAgent = new TreasureWorldEnv(wDim, tX, tY);
+    TAgent = new TreasureFinder(wDim, EnvAgent);
+    TAgent.loadListOfSteps(numSteps, fileSteps);
+
+
    // Execute sequence of steps with the Agent
+    for(int i = 0; i < numSteps; i++){
+        TAgent.runNextStep();
+    }
 
 }
 
@@ -56,6 +65,8 @@ public static void runStepsSequence( int wDim, int tX, int tY,
 **/
 public static void main ( String[] args) throws ParseFormatException,
         IOException,  ContradictionException, TimeoutException {
+    //TODO
+    //READ FILE AND GET PARAMS
 
   // Here I run a concrete example, but you should read parameters from
   // the command line, as decribed above.

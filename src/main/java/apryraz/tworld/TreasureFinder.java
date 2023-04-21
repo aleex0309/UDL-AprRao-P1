@@ -80,14 +80,15 @@ public class TreasureFinder {
      * The class constructor must create the initial Boolean formula with the
      * rules of the Treasure World, initialize the variables for indicating
      * that we do not have yet any movements to perform, make the initial state.
-     * 
+     *
      * @param WDim the dimension of the Treasure World
-     * 
+     *
      **/
-    public TreasureFinder(int WDim) {
+    public TreasureFinder(int WDim, TreasureWorldEnv enviroment) {
 
         WorldDim = WDim;
         WorldLinealDim = WorldDim * WorldDim;
+        setEnvironment(enviroment);
 
         try {
             solver = buildGamma();
@@ -109,9 +110,9 @@ public class TreasureFinder {
      * agent to interact with the Treasure World, by sending messages and getting
      * answers to them. This function must be called before trying to perform any
      * steps with the agent.
-     * 
+     *
      * @param environment the Environment object
-     * 
+     *
      **/
     public void setEnvironment(TreasureWorldEnv environment) {
 
@@ -122,11 +123,11 @@ public class TreasureFinder {
      * Load a sequence of steps to be performed by the agent. This sequence will
      * be stored in the listOfSteps ArrayList of the agent. Steps are represented
      * as objects of the class Position.
-     * 
+     *
      * @param numSteps  number of steps to read from the file
      * @param stepsFile the name of the text file with the line that contains
      *                  the sequence of steps: x1,y1 x2,y2 ... xn,yn
-     * 
+     *
      **/
     public void loadListOfSteps(int numSteps, String stepsFile) {
         String[] stepsList;
@@ -292,7 +293,7 @@ public class TreasureFinder {
      * value = 2 -> Set all cells but the square corners around the agent as not
      * possible
      * value = 3 -> Set 9 cells around the agent as not possible
-     * 
+     *
      * @param value Value of the sensor
      * @param x     X pos of the agent
      * @param y     Y pos of the agent
@@ -317,9 +318,9 @@ public class TreasureFinder {
 
     private void setCrossToX(int x, int y) {
         /*
-         * X?X
-         * ???
-         * X?X
+         * ?X?
+         * XXX
+         * ?X?
          */
         tfstate.set(x, y, "X");
         tfstate.set(x, y - 1, "X");
@@ -330,9 +331,9 @@ public class TreasureFinder {
 
     private void setCornersToX(int x, int y) {
         /*
-         * ?X?
-         * XXX
-         * ?X?
+         * X?X
+         * ???
+         * X?X
          */
         tfstate.set(x - 1, y - 1, "X");
         tfstate.set(x + 1, y + 1, "X");
@@ -421,7 +422,7 @@ public class TreasureFinder {
 
     /**
      * Generates and adds to the solver all the detector clauses
-     * 
+     *
      * @param detectorCount the number of detectors in the agent
      */
     private void addDetectorClauses(int detectorCount) {
@@ -437,7 +438,7 @@ public class TreasureFinder {
     /**
      * Adds all the world clauses where the treasure can be
      * In past and future
-     * 
+     *
      * @param dimensions The number of cells of the world N*N
      * @throws ContradictionException
      */
