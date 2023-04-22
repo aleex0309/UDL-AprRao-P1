@@ -297,8 +297,9 @@ public class TreasureFinder {
      * @param value Value of the sensor
      * @param x     X pos of the agent
      * @param y     Y pos of the agent
+     * @throws ContradictionException
      */
-    private void processSensorValue(int x, int y, int value) {
+    private void processSensorValue(int x, int y, int value) throws ContradictionException {
         switch (value) {
             case 1: {
                 setCrossToX(x, y);
@@ -316,29 +317,33 @@ public class TreasureFinder {
         }
     }
 
-    private void setCrossToX(int x, int y) {
+    private void setCrossToX(int x, int y) throws ContradictionException {
         /*
          * ?X?
          * XXX
          * ?X?
          */
-        tfstate.set(x, y, "X");
-        tfstate.set(x, y - 1, "X");
-        tfstate.set(x, y + 1, "X");
-        tfstate.set(x - 1, y, "X");
-        tfstate.set(x + 1, y, "X");
+        IVecInt evidence = new VecInt(5);
+        evidence.insertFirst(-coordToLineal(x, y, TreasureFutureOffset));
+        evidence.insertFirst(-coordToLineal(x, y - 1, TreasureFutureOffset));
+        evidence.insertFirst(-coordToLineal(x, y + 1, TreasureFutureOffset));
+        evidence.insertFirst(-coordToLineal(x - 1, y, TreasureFutureOffset));
+        evidence.insertFirst(-coordToLineal(x + 1, y, TreasureFutureOffset));
+        solver.addClause(evidence);
     }
 
-    private void setCornersToX(int x, int y) {
+    private void setCornersToX(int x, int y) throws ContradictionException {
         /*
          * X?X
          * ???
          * X?X
          */
-        tfstate.set(x - 1, y - 1, "X");
-        tfstate.set(x + 1, y + 1, "X");
-        tfstate.set(x - 1, y + 1, "X");
-        tfstate.set(x + 1, y - 1, "X");
+        IVecInt evidence = new VecInt(4);
+        evidence.insertFirst(-coordToLineal(x - 1, y - 1, TreasureFutureOffset));
+        evidence.insertFirst(-coordToLineal(x + 1, y + 1, TreasureFutureOffset));
+        evidence.insertFirst(-coordToLineal(x - 1, y + 1, TreasureFutureOffset));
+        evidence.insertFirst(-coordToLineal(x + 1, y - 1, TreasureFutureOffset));
+        solver.addClause(evidence);
     }
 
     /**
