@@ -22,16 +22,15 @@ public class TreasureWorldEnv {
 * @param dim dimension of the world
 * @param tx  X position of Treasure
 * @param ty  Y position of Treasure
-* @param piratesFile File with list of pirates locations
 **/
-  public TreasureWorldEnv( int dim, int tx, int ty  ) {
-
+  public TreasureWorldEnv( int dim, int tx, int ty) {
     TreasureX = tx;
     TreasureY = ty;
     WorldDim = dim;
+
   }
 
- 
+
 
 
 /**
@@ -50,9 +49,9 @@ public class TreasureWorldEnv {
        if ( msg.getComp(0).equals("moveto") ) {
            int nx = Integer.parseInt( msg.getComp(1) );
            int ny = Integer.parseInt( msg.getComp(2) );
-           
+
            if (withinLimits(nx,ny))
-           {                          
+           {
              ans = new AMessage("movedto",msg.getComp(1),msg.getComp(2),  ""  );
            }
            else
@@ -60,13 +59,13 @@ public class TreasureWorldEnv {
 
        } else {
              // YOU MUST ANSWER ALSO TO THE OTHER MESSAGE TYPE:
-             //   ( "detectsat", "x" , "y", "" )             
+             //   ( "detectsat", "x" , "y", "" )
          }
        return ans;
 
    }
 
- 
+
  /**
   * Check if position x,y is within the limits of the
   * WorldDim x WorldDim   world
@@ -80,5 +79,5 @@ public class TreasureWorldEnv {
 
     return ( x >= 1 && x <= WorldDim && y >= 1 && y <= WorldDim);
   }
- 
+
 }

@@ -43,10 +43,9 @@ public static void runStepsSequence( int wDim, int tX, int tY,
 
 
    // Set environment object, and load list of pirate positions
-
+    EnvAgent = new TreasureWorldEnv(wDim, tX, tY);
 
    // load list of steps into the Finder Agent
-    EnvAgent = new TreasureWorldEnv(wDim, tX, tY);
     TAgent = new TreasureFinder(wDim, EnvAgent);
     TAgent.loadListOfSteps(numSteps, fileSteps);
 
@@ -55,7 +54,6 @@ public static void runStepsSequence( int wDim, int tX, int tY,
     for(int i = 0; i < numSteps; i++){
         TAgent.runNextStep();
     }
-
 }
 
 /**
