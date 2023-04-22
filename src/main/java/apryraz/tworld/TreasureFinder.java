@@ -41,7 +41,7 @@ public class TreasureFinder {
      * Array of clauses that represent conclusiones obtained in the last
      * call to the inference function, but rewritten using the "past" variables
      **/
-    ArrayList<VecInt> futureToPast = null;
+    ArrayList<VecInt> futureToPast = new ArrayList<>();
     /**
      * the current state of knowledge of the agent (what he knows about
      * every position of the world)
