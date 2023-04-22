@@ -350,6 +350,13 @@ public class TreasureFinder {
     public void addLastFutureClausesToPastClauses() throws IOException,
             ContradictionException, TimeoutException {
 
+        // Add the clauses to the formula
+        for (var clause : futureToPast) {
+            solver.addClause(clause);
+        }
+
+        // Clear the array for further use
+        futureToPast = new ArrayList<>();
     }
 
     /**
