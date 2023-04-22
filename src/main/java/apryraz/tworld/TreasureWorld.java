@@ -16,6 +16,9 @@ public class TreasureWorld {
     static int wDim;
     static int numSteps;
     static String fileSteps;
+    static int tX;
+    static int tY;
+
 
 
 
@@ -65,12 +68,19 @@ public static void runStepsSequence( int wDim, int tX, int tY,
 **/
 public static void main ( String[] args) throws ParseFormatException,
         IOException,  ContradictionException, TimeoutException {
-    //TODO
-    //READ FILE AND GET PARAMS
+    if (args.length != 5){
+        System.err.println("Usage: TreasureWorld WorldDimension XPosTreasure YPosTreasure NumberOfSteps FileWithSteps");
+    }
+    wDim = Integer.parseInt(args[0]);
+    tX = Integer.parseInt(args[1]);
+    tY = Integer.parseInt(args[2]);
+    numSteps = Integer.parseInt(args[3]);
+    fileSteps = args[4];
 
   // Here I run a concrete example, but you should read parameters from
   // the command line, as decribed above.
   runStepsSequence(  6, 3, 3, 5, "tests/steps1.txt"  );
+  //runStepsSequence(wDim, tX, tY, numSteps, fileSteps);
 }
 
 }
