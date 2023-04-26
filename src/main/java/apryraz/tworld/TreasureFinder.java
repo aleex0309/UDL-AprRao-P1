@@ -272,18 +272,22 @@ public class TreasureFinder {
      *            It will a message with four fields: detected x y [1,2,3]
      **/
     public void processDetectorSensorAnswer(AMessage ans) throws IOException, ContradictionException, TimeoutException {
-
-        if (ans.getComp(0).equals("detected")) {
+        System.out.println("PROCESS DETECTOR");
+        ans.showMessage();
+        System.out.println("PROCESS END DETECTOR");
+        if (ans.getComp(0).equals("detectsat")) {
             int x = Integer.parseInt(ans.getComp(1));
             int y = Integer.parseInt(ans.getComp(2));
-            int sensorValue = Integer.parseInt(ans.getComp(3));
+            String sensorReading = ans.getComp(3);
 
             // Call your function/functions to add the evidence clauses
             // to Gamma to then be able to infer new NOT possible positions
 
             // CALL your functions HERE
-
-            processSensorValue(x, y, sensorValue);
+            for(int i = 0; i < sensorReading.length(); i++){
+                System.out.println(sensorReading.charAt(i));
+            }
+            //processSensorValue(x, y, sensorValue);
         }
     }
 

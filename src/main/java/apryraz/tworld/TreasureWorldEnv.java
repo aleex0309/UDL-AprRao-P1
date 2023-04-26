@@ -27,7 +27,6 @@ public class TreasureWorldEnv {
     TreasureX = tx;
     TreasureY = ty;
     WorldDim = dim;
-
   }
 
 

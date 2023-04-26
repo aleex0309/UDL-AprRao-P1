@@ -66,14 +66,14 @@ public static void runStepsSequence( int wDim, int tX, int tY,
 **/
 public static void main ( String[] args) throws ParseFormatException,
         IOException,  ContradictionException, TimeoutException {
-    if (args.length != 5){
+    /**if (args.length != 5){
         System.err.println("Usage: TreasureWorld WorldDimension XPosTreasure YPosTreasure NumberOfSteps FileWithSteps");
     }
     wDim = Integer.parseInt(args[0]);
     tX = Integer.parseInt(args[1]);
     tY = Integer.parseInt(args[2]);
     numSteps = Integer.parseInt(args[3]);
-    fileSteps = args[4];
+    fileSteps = args[4];**/
 
   // Here I run a concrete example, but you should read parameters from
   // the command line, as decribed above.
