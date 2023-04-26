@@ -73,7 +73,7 @@ public class TreasureFinder {
      **/
     int TreasurePastOffset;
     int TreasureFutureOffset;
-    int DetectorOffset;
+    int DetectorOffset[];
     int actualLiteral;
 
     /**
@@ -272,7 +272,6 @@ public class TreasureFinder {
      *            It will a message with four fields: detected x y [1,2,3]
      **/
     public void processDetectorSensorAnswer(AMessage ans) throws IOException, ContradictionException, TimeoutException {
-
         if (ans.getComp(0).equals("detected")) {
             int x = Integer.parseInt(ans.getComp(1));
             int y = Integer.parseInt(ans.getComp(2));
@@ -283,37 +282,9 @@ public class TreasureFinder {
 
             // CALL your functions HERE
 
-            processSensorValue(x, y, sensorValue);
-        }
-    }
-
-    /**
-     * According to the assignment:
-     * value = 1 -> Set all cells but "+" around agent as not possible
-     * value = 2 -> Set all cells but the square corners around the agent as not
-     * possible
-     * value = 3 -> Set 9 cells around the agent as not possible
-     *
-     * @param value Value of the sensor
-     * @param x     X pos of the agent
-     * @param y     Y pos of the agent
-     * @throws ContradictionException
-     */
-    private void processSensorValue(int x, int y, int value) throws ContradictionException {
-        switch (value) {
-            case 1: {
-                setCrossToX(x, y);
-            }
-                ;
-            case 2: {
-                setCornersToX(x, y);
-            }
-                ;
-            case 3: {
-                // Case 3 can be achieved by combining case 1 and 2
-                setCrossToX(x, y);
-                setCornersToX(x, y);
-            }
+            IVecInt evidence = new VecInt();
+            evidence.insertFirst(coordToLineal(x, y, DetectorOffset[sensorValue - 1]));
+            solver.addClause(evidence);
         }
     }
 
@@ -432,23 +403,30 @@ public class TreasureFinder {
         // call here functions to add the different sets of clauses
         // of Gamma to the solver object
         addWorldClauses(WorldLinealDim);
-        addDetectorClauses(3);
+        addDetectorClauses(WorldLinealDim, 3);
 
         return solver;
     }
 
     /**
-     * Generates and adds to the solver all the detector clauses
+     * Generates and adds to the solver all the detector clauses for each detector
      *
      * @param detectorCount the number of detectors in the agent
+     * @param dimensions    the cells in the world NxN
      */
-    private void addDetectorClauses(int detectorCount) {
-        // Generate dectector clauses
-        VecInt pastClause = new VecInt();
-        DetectorOffset = actualLiteral;
+    private void addDetectorClauses(int dimensions, int detectorCount) {
+        VecInt clause = new VecInt();
+        DetectorOffset = new int[detectorCount];
+
+        // For each detector
         for (int i = 0; i < detectorCount; i++) {
-            pastClause.insertFirst(actualLiteral);
-            actualLiteral++;
+            // Save detector offset
+            DetectorOffset[i] = actualLiteral;
+            // Add negated clause for each cell
+            for (int j = 0; j < dimensions; j++) {
+                clause.insertFirst(-actualLiteral);
+                actualLiteral++;
+            }
         }
     }
 
