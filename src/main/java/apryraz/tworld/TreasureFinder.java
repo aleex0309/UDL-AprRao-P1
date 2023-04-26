@@ -404,8 +404,34 @@ public class TreasureFinder {
         // of Gamma to the solver object
         addWorldClauses(WorldLinealDim);
         addDetectorClauses(WorldLinealDim, 3);
+        addImplicationClauses(WorldLinealDim, 3);
 
         return solver;
+    }
+
+    /**
+     * Adds all implications for each sensor and positions on the map
+     * 
+     * For each sensor:
+     * For each xy in N*N:
+     * Sxy -> -"all but(+, corners)" or -"9x9 around agent"
+     * 
+     * @param worldDim
+     * @param detectorCount
+     */
+    private void addImplicationClauses(int worldDim, int detectorCount) {
+        // VecInt clause = new VecInt();
+
+        // // For each detector
+        // for (int i = 0; i < detectorCount; i++) {
+        // // Save detector offset
+        // DetectorOffset[i] = actualLiteral;
+        // // Add negated clause for each cell
+        // for (int j = 0; j < dimensions; j++) {
+        // clause.insertFirst(-actualLiteral);
+        // actualLiteral++;
+        // }
+        // }
     }
 
     /**
@@ -413,21 +439,24 @@ public class TreasureFinder {
      *
      * @param detectorCount the number of detectors in the agent
      * @param dimensions    the cells in the world NxN
+     * @throws ContradictionException
      */
-    private void addDetectorClauses(int dimensions, int detectorCount) {
-        VecInt clause = new VecInt();
+    private void addDetectorClauses(int dimensions, int detectorCount) throws ContradictionException {
         DetectorOffset = new int[detectorCount];
 
         // For each detector
         for (int i = 0; i < detectorCount; i++) {
             // Save detector offset
             DetectorOffset[i] = actualLiteral;
+            VecInt clause = new VecInt();
             // Add negated clause for each cell
             for (int j = 0; j < dimensions; j++) {
                 clause.insertFirst(-actualLiteral);
                 actualLiteral++;
             }
+            solver.addClause(clause);
         }
+
     }
 
     /**
