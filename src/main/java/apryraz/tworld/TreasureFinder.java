@@ -12,6 +12,7 @@ import static java.lang.System.exit;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.sat4j.core.VecInt;
@@ -115,8 +116,7 @@ public class TreasureFinder {
      *
      **/
     public void setEnvironment(TreasureWorldEnv environment) {
-
-        EnvAgent = environment;
+        this.EnvAgent = environment;
     }
 
     /**
@@ -288,35 +288,6 @@ public class TreasureFinder {
         }
     }
 
-    private void setCrossToX(int x, int y) throws ContradictionException {
-        /*
-         * ?X?
-         * XXX
-         * ?X?
-         */
-        IVecInt evidence = new VecInt(5);
-        evidence.insertFirst(-coordToLineal(x, y, TreasureFutureOffset));
-        evidence.insertFirst(-coordToLineal(x, y - 1, TreasureFutureOffset));
-        evidence.insertFirst(-coordToLineal(x, y + 1, TreasureFutureOffset));
-        evidence.insertFirst(-coordToLineal(x - 1, y, TreasureFutureOffset));
-        evidence.insertFirst(-coordToLineal(x + 1, y, TreasureFutureOffset));
-        solver.addClause(evidence);
-    }
-
-    private void setCornersToX(int x, int y) throws ContradictionException {
-        /*
-         * X?X
-         * ???
-         * X?X
-         */
-        IVecInt evidence = new VecInt(4);
-        evidence.insertFirst(-coordToLineal(x - 1, y - 1, TreasureFutureOffset));
-        evidence.insertFirst(-coordToLineal(x + 1, y + 1, TreasureFutureOffset));
-        evidence.insertFirst(-coordToLineal(x - 1, y + 1, TreasureFutureOffset));
-        evidence.insertFirst(-coordToLineal(x + 1, y - 1, TreasureFutureOffset));
-        solver.addClause(evidence);
-    }
-
     /**
      * This function should add all the clauses stored in the list
      * futureToPast to the formula stored in solver.
@@ -388,8 +359,8 @@ public class TreasureFinder {
      **/
     public ISolver buildGamma() throws UnsupportedEncodingException,
             FileNotFoundException, IOException, ContradictionException {
-        // N * N * 2 (past, future) + 3(sensors)
-        int totalNumVariables = WorldLinealDim * 2 + 3;
+        // N * N * 2 (past, future) + 3(sensors)*world
+        int totalNumVariables = WorldLinealDim * 2 + WorldLinealDim * 3;
 
         // You must set this variable to the total number of boolean variables
         // in your formula Gamma
@@ -404,7 +375,7 @@ public class TreasureFinder {
         // of Gamma to the solver object
         addWorldClauses(WorldLinealDim);
         addDetectorClauses(WorldLinealDim, 3);
-        addImplicationClauses(WorldLinealDim, 3);
+        addImplicationClauses(WorldLinealDim);
 
         return solver;
     }
@@ -418,20 +389,128 @@ public class TreasureFinder {
      * 
      * @param worldDim
      * @param detectorCount
+     * @throws ContradictionException
      */
-    private void addImplicationClauses(int worldDim, int detectorCount) {
-        // VecInt clause = new VecInt();
+    private void addImplicationClauses(int dimensions) throws ContradictionException {
+        // Add for each xy
+        // and for each x'y' from "9 cells around agent"
+        // S(3)xy -> -Tx'y'(t+1)
+        for (int x = 1; x <= WorldDim; x++) {
+            for (int y = 1; y <= WorldDim; y++) {
+                /*
+                 * ?????
+                 * ?XXX?
+                 * ?XXX?
+                 * ?XXX?
+                 * ?????
+                 */
+                int offsets[][] = {
+                        { x - 1, y + 1 }, { x, y + 1 }, { x + 1, y + 1 },
+                        { x - 1, y }, { x, y }, { x + 1, y },
+                        { x - 1, y - 1 }, { x, y - 1 }, { x + 1, y - 1 } };
 
-        // // For each detector
-        // for (int i = 0; i < detectorCount; i++) {
-        // // Save detector offset
-        // DetectorOffset[i] = actualLiteral;
-        // // Add negated clause for each cell
-        // for (int j = 0; j < dimensions; j++) {
-        // clause.insertFirst(-actualLiteral);
-        // actualLiteral++;
-        // }
-        // }
+                addImplicationFromOffsets(x, y, offsets, 3);
+            }
+        }
+
+        // Add for each xy
+        // and for each x'y' from "all but corners"
+        // S(3)xy -> -Tx'y'(t+1)
+        for (int x = 1; x <= WorldDim; x++) {
+            for (int y = 1; y <= WorldDim; y++) {
+
+                /*
+                 * XXXXX
+                 * X?X?X
+                 * XXXXX
+                 * X?X?X
+                 * XXXXX
+                 */
+                int offsets[][] = {
+                        { x, y + 1 },
+                        { x - 1, y }, { x, y }, { x + 1, y },
+                        { x, y - 1 } };
+
+                addImplicationFromOffsets(x, y, offsets, 2);
+                addImplicationOutsideSquare(x, y, 2);
+
+            }
+        }
+
+        // Add for each xy
+        // and for each x'y' from "all but cross"
+        // S(3)xy -> -Tx'y'(t+1)
+        for (int x = 1; x <= WorldDim; x++) {
+            for (int y = 1; y <= WorldDim; y++) {
+
+                /*
+                 * XXXXX
+                 * XX?XX
+                 * X???X
+                 * XX?XX
+                 * XXXXX
+                 */
+                int offsets[][] = {
+                        { x - 1, y + 1 }, { x + 1, y + 1 },
+                        { x - 1, y - 1 }, { x + 1, y - 1 } };
+
+                addImplicationFromOffsets(x, y, offsets, 1);
+                addImplicationOutsideSquare(x, y, 1);
+
+            }
+        }
+
+    }
+
+    private void addImplicationOutsideSquare(int x, int y, int detector)
+            throws ContradictionException {
+
+        // Calculate the positions of the square
+        int offsets[][] = {
+                { x - 1, y + 1 }, { x, y + 1 }, { x + 1, y + 1 },
+                { x - 1, y }, { x, y }, { x + 1, y },
+                { x - 1, y - 1 }, { x, y - 1 }, { x + 1, y - 1 } };
+
+        for (int i = 1; i <= WorldDim; i++) {
+            for (int j = 1; j <= WorldDim; j++) {
+
+                // If is one of the 9 cells surrounding agent skip
+                boolean skip = false;
+                for (var pos : offsets) {
+                    if (pos[0] == i && pos[1] == j) {
+                        skip = true;
+                        break;
+                    }
+                }
+
+                if (skip)
+                    continue;
+
+                VecInt clause = new VecInt();
+                clause.insertFirst(-coordToLineal(i, j, TreasureFutureOffset));
+                clause.insertFirst(-coordToLineal(x, y, DetectorOffset[detector - 1]));
+                solver.addClause(clause);
+            }
+        }
+
+    }
+
+    private void addImplicationFromOffsets(int originalX, int originalY, int[][] offsets, int detector)
+            throws ContradictionException {
+        for (var pos : offsets) {
+            int x = pos[0], y = pos[1];
+
+            // If outside limits don't add it
+            if (!EnvAgent.withinLimits(x, y))
+                continue;
+
+            // A -> B = -AvB
+            // detector -> -cell = -detector v -cell
+            VecInt clause = new VecInt();
+            clause.insertFirst(-coordToLineal(x, y, TreasureFutureOffset));
+            clause.insertFirst(-coordToLineal(originalX, originalY, DetectorOffset[detector - 1]));
+            solver.addClause(clause);
+        }
     }
 
     /**
