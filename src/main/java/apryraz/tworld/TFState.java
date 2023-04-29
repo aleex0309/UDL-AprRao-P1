@@ -12,7 +12,7 @@ public class TFState {
 
     /**
      * Constructor of the class
-     * @param dim: Dimension of the world.
+     * @param dim Dimension of the world.
      */
   public TFState( int dim ) {
     wDim = dim;
@@ -34,9 +34,9 @@ public class TFState {
 
     /**
      * Sets a desired value to a determinate position in the world.
-     * @param i: X position in the world.
-     * @param j: Y position in the world.
-     * @param val: Value of the (X,Y) position.
+     * @param i X position in the world.
+     * @param j Y position in the world.
+     * @param val Value of the (X,Y) position.
      */
   public void set( int i, int j, String val ) {
 
@@ -46,7 +46,7 @@ public class TFState {
     /**
      * Compares two TFState objects to check if they are equal.
      * @param obj: TFState object to compare with the actual state.
-     * @return: True if they are equal, False if not.
+     * @return True if they are equal, False if not.
      */
   public boolean equals(Object obj){
        TFState tfstate2 = (TFState) obj;

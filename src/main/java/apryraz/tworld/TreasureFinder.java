@@ -387,7 +387,7 @@ public class TreasureFinder {
      * For each xy in N*N:
      * Sxy -> -"all but(+, corners)" or -"9x9 around agent"
      *
-     * @param dimensions:
+     * @param dimensions
      * @throws ContradictionException
      */
     private void addImplicationClauses(int dimensions) throws ContradictionException {

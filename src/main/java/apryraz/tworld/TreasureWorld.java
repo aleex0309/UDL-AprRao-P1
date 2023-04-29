@@ -30,7 +30,9 @@ public class TreasureWorld {
    * @param tY        y coordinate of Barcenas position
    * @param numSteps  num of steps to perform
    * @param fileSteps file name with sequence of steps to perform
-   *
+   * @throws IOException
+   * @throws ContradictionException
+   * @throws TimeoutException
    **/
   public static void runStepsSequence(int wDim, int tX, int tY,
       int numSteps, String fileSteps) throws IOException, ContradictionException, TimeoutException {
@@ -53,11 +55,13 @@ public class TreasureWorld {
 
   /**
    * This function should load five arguments from the command line:
+   * @param args:
    * arg[0] = dimension of the word
    * arg[1] = x coordinate of treasure position
    * arg[2] = y coordinate of treasure position
    * arg[3] = num of steps to perform
    * arg[4] = file name with sequence of steps to perform
+   * @throws ParseFormatException
    **/
   public static void main(String[] args) throws ParseFormatException,
       IOException, ContradictionException, TimeoutException {
