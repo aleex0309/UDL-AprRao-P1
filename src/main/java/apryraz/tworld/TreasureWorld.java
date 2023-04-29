@@ -7,27 +7,30 @@ import org.sat4j.reader.*;
 
 /**
  * The class for the main program of the Barcenas World
- * 
+ *
  **/
 public class TreasureWorld {
-  static int wDim;
-  static int numSteps;
-  static String fileSteps;
-  static int tX;
-  static int tY;
+  /**
+   * Main program for TreasureWorld
+   */
+  static int wDim; // dimension of the world
+  static int numSteps; // number of steps to perform
+  static String fileSteps; // file name with sequence of steps to perform
+  static int tX; // x coordinate of treasure position
+  static int tY; // y coordinate of treasure position
 
   /**
    * This function should execute the sequence of steps stored in the file
    * fileSteps,
    * but only up to numSteps steps. Each step must be executed with function
    * runNextStep() of the BarcenasFinder agent.
-   * 
+   *
    * @param wDim      the dimension of world
    * @param tX        x coordinate of Barcenas position
    * @param tY        y coordinate of Barcenas position
    * @param numSteps  num of steps to perform
    * @param fileSteps file name with sequence of steps to perform
-   * 
+   *
    **/
   public static void runStepsSequence(int wDim, int tX, int tY,
       int numSteps, String fileSteps) throws IOException, ContradictionException, TimeoutException {

@@ -9,7 +9,6 @@ import javax.swing.plaf.TreeUI;
 public class TreasureWorldEnv {
   /**
    * X,Y position of Treasure and world dimension
-   * 
    **/
   int TreasureX, TreasureY, WorldDim;
 
@@ -80,7 +79,7 @@ public class TreasureWorldEnv {
    * Given a position in the world checks if the treasure is located in the
    * corners
    * around x y
-   * 
+   *
    * @param x position x in the world
    * @param y position y in the world
    * @return true if is in the corners, else false

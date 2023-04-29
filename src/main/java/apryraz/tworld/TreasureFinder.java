@@ -379,16 +379,15 @@ public class TreasureFinder {
 
         return solver;
     }
-
+    //TODO
     /**
      * Adds all implications for each sensor and positions on the map
-     * 
+     *
      * For each sensor:
      * For each xy in N*N:
      * Sxy -> -"all but(+, corners)" or -"9x9 around agent"
-     * 
-     * @param worldDim
-     * @param detectorCount
+     *
+     * @param dimensions:
      * @throws ContradictionException
      */
     private void addImplicationClauses(int dimensions) throws ContradictionException {
@@ -461,7 +460,7 @@ public class TreasureFinder {
         }
 
     }
-
+    //TODO
     private void addImplicationOutsideSquare(int x, int y, int detector)
             throws ContradictionException {
 
@@ -494,7 +493,7 @@ public class TreasureFinder {
         }
 
     }
-
+    //TODO
     private void addImplicationFromOffsets(int originalX, int originalY, int[][] offsets, int detector)
             throws ContradictionException {
         for (var pos : offsets) {
