@@ -1,0 +1,110 @@
+\documentclass[12pt]{article}
+
+
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{enumitem}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[catalan]{babel}
+
+\usepackage{a4wide}
+
+\usepackage{blindtext}
+\renewcommand{\baselinestretch}{1.25}  
+\newcommand\crule[3][black]{\textcolor{#1}{\rule{#2}{#3}}}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Marc Gaspà Joval\\Enginyeria Informàtica}
+\lhead{\includegraphics[width=2.5cm]{logoudl.png}}
+\setlength{\headheight}{30pt}
+
+\fancyfoot[R]{\thepage}
+\rfoot{\thepage}
+\renewcommand{\footrulewidth}{0.4pt}
+\setlength{\footskip}{25pt}
+
+
+
+\begin{document}
+\begin{titlepage}
+	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+	\center
+
+	\includegraphics[width=5cm]{logoudl.png}\\
+	\textsc{\Large Enginyeria Informàtica}\\[0.5cm]
+	\textsc{\large Raonament i Aprenentatge Automàtic}\\[0.5cm]
+
+	\HRule\\[0.4cm]
+
+	{\huge\bfseries Practica 1}\\[0.4cm]
+	{\LARGE Treasure World}
+	\HRule\\[1.5cm]
+
+	\textsc{Alexandru Cristian Stoia - Y2386362B\\
+		Marc Gaspà Joval - 53923041R}
+
+	\vfill\vfill\vfill
+	{\large\today}
+\end{titlepage}
+\pagebreak
+
+\section{Formula}
+\subsection{Variables}
+$$ \Gamma = \{ t_{xy}^{t-1}, t_{xy}^{t+1}, S1_{xy}, S2_{xy}, S3_{xy}   \} $$
+
+\subsubsection{Description}
+We define two variables for each position $xy$ on the map:
+\begin{itemize}[label={}]
+	\item $t_{xy}$, which is true if the treasure is located at position $xy$.
+	\item $S_{xy}^i$, which is true if sensor $i\in{1,2,3}$ is activated at position $xy$.
+\end{itemize}
+
+\subsubsection{Future and past times}
+For the variable $t_{xy}$, we have two versions: one for the past and one for the future. The past version indicates what we already know, and the future version is used to update the past version.\\\\
+To convert from the past version to the future version, we use the following implication:
+$$ t_{xy}^{t-1} \rightarrow t_{xy}^{t+1} $$
+Note that in the exercise, we are given a function called \textbf{addLastFutureClausesToPastClauses()}, which performs the conversion from the future version to the past version.
+
+\pagebreak
+\subsection{Implications}
+For each sensor we add the necessary implications to encode all
+positions of the map
+
+\subsubsection{Sensor 1}
+If \textbf{sensor 1} is activated in $xy$ means the treasure is located in one of the five cells $\{(x, y- 1), (x, y), (x, y + 1), (x- 1, y), (x +
+	1, y)\}$. So, it is NOT in any other cells of the world.
+
+\begin{tabbing}
+	$ \forall xy \in \{N*N\}: $\\
+	\hspace{1em} $ \forall x'y' \in \{"\textrm{4 corners adjacent to } xy"\}\cup
+		\{"\textrm{all other but 9 adjacent to }xy"\}  :$\\
+	$ \hspace{3em} S1_{xy} \rightarrow \lnot t_{x'y'}^{t+1}$
+\end{tabbing}
+
+\subsubsection{Sensor 2}
+If \textbf{sensor 2} is activated the treasure is located in one of the four cells $\{(x + 1, y + 1), (x + 1, y - 1), (x - 1, y -
+	1), (x - 1, y + 1)\}$. So, it is NOT in any other cells of the world.
+\begin{tabbing}
+	$ \forall xy \in \{N*N\}: $\\
+	\hspace{1em} $ \forall x'y' \in \{"\textrm{5 cells forming a cross arround } xy"\}\cup
+		\{"\textrm{all other but 9 adjacent to }xy"\}  :$\\
+	$ \hspace{3em} S2_{xy} \rightarrow \lnot t_{x'y'}^{t+1}$
+\end{tabbing}
+
+\subsubsection{Sensor 3}
+If \textbf{sensor 3} is activated means the treasure is NOT located in any of the nine cells of the filled square centered around $xy$:
+\begin{tabbing}
+	$ \forall xy \in \{N*N\}: $\\
+	\hspace{1em} $ \forall x'y' \in \{"\textrm{9 cells arround } xy"\}:$\\
+	$ \hspace{3em} S3_{xy} \rightarrow \lnot t_{x'y'}^{t+1}$
+\end{tabbing}
+
+\end{document}
