@@ -9,17 +9,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import static java.lang.System.exit;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Iterator;
-import java.util.concurrent.Future;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.sat4j.core.VecInt;
 
 import org.sat4j.specs.*;
 import org.sat4j.minisat.*;
-import org.sat4j.reader.*;
 
 /**
  * This agent performs a sequence of movements, and after each
@@ -74,6 +70,9 @@ public class TreasureFinder {
      **/
     int TreasurePastOffset;
     int TreasureFutureOffset;
+    /**
+     *Array that contains the offset for every sensor: 0 -> 1st sensor, 1-> 2nd...
+     */
     int DetectorOffset[];
     int actualLiteral;
 
@@ -83,7 +82,7 @@ public class TreasureFinder {
      * that we do not have yet any movements to perform, make the initial state.
      *
      * @param WDim the dimension of the Treasure World
-     *
+     * @param enviroment Enviroment of the problem
      **/
     public TreasureFinder(int WDim, TreasureWorldEnv enviroment) {
 
@@ -375,22 +374,22 @@ public class TreasureFinder {
         // of Gamma to the solver object
         addWorldClauses(WorldLinealDim);
         addDetectorClauses(WorldLinealDim, 3);
-        addImplicationClauses(WorldLinealDim);
+        addImplicationClauses();
 
         return solver;
     }
-    //TODO
     /**
      * Adds all implications for each sensor and positions on the map
      *
      * For each sensor:
      * For each xy in N*N:
-     * Sxy -> -"all but(+, corners)" or -"9x9 around agent"
+     * Sxy -> -"all except(+ or corners)" or -"9x9 around agent"
      *
-     * @param dimensions
+     * Where: Sensor 1 or Sensor 2 or 3 and xy is the position
+     *
      * @throws ContradictionException
      */
-    private void addImplicationClauses(int dimensions) throws ContradictionException {
+    private void addImplicationClauses() throws ContradictionException {
         // Add for each xy
         // and for each x'y' from "9 cells around agent"
         // S(3)xy -> -Tx'y'(t+1)
@@ -414,7 +413,7 @@ public class TreasureFinder {
 
         // Add for each xy
         // and for each x'y' from "all but corners"
-        // S(3)xy -> -Tx'y'(t+1)
+        // S(2)xy -> -Tx'y'(t+1)
         for (int x = 1; x <= WorldDim; x++) {
             for (int y = 1; y <= WorldDim; y++) {
 
@@ -438,7 +437,7 @@ public class TreasureFinder {
 
         // Add for each xy
         // and for each x'y' from "all but cross"
-        // S(3)xy -> -Tx'y'(t+1)
+        // S(1)xy -> -Tx'y'(t+1)
         for (int x = 1; x <= WorldDim; x++) {
             for (int y = 1; y <= WorldDim; y++) {
 
@@ -460,7 +459,14 @@ public class TreasureFinder {
         }
 
     }
-    //TODO
+
+    /**
+     * Negates all positions which are not around our X,Y position.
+     * @param x X coordenate
+     * @param y Y coordenate
+     * @param detector Index of the detector
+     * @throws ContradictionException
+     */
     private void addImplicationOutsideSquare(int x, int y, int detector)
             throws ContradictionException {
 
@@ -493,7 +499,16 @@ public class TreasureFinder {
         }
 
     }
-    //TODO
+
+    /**
+     * Given an offset array, used for mapping specific positions around an (x,y) position, creates an implication where
+     * those positions are negated.
+     * @param originalX X position of the cell where offsets are applied.
+     * @param originalY Y position of the cell where offsets are applied.
+     * @param offsets array that contains cell positions around original X,Y
+     * @param detector Index of the detector which causes the implications. (causes the offsets to be negated)
+     * @throws ContradictionException
+     */
     private void addImplicationFromOffsets(int originalX, int originalY, int[][] offsets, int detector)
             throws ContradictionException {
         for (var pos : offsets) {

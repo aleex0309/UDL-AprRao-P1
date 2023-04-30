@@ -76,8 +76,8 @@ public class TreasureWorld {
 
     // Here I run a concrete example, but you should read parameters from
     // the command line, as decribed above.
-    runStepsSequence(6, 3, 3, 5, "tests/steps1.txt");
-    // runStepsSequence(wDim, tX, tY, numSteps, fileSteps);
+    //runStepsSequence(6, 3, 3, 5, "tests/steps1.txt");
+    runStepsSequence(wDim, tX, tY, numSteps, fileSteps);
   }
 
 }
