@@ -1,4 +1,5 @@
 target
+!target/site
 .DS_Store
 
 # Latex build
