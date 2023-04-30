@@ -1,6 +1,15 @@
 target
 .DS_Store
 
+# Latex build
+doc/report/build/Plantilla Uni.aux
+doc/report/build/Plantilla Uni.fdb_latexmk
+doc/report/build/Plantilla Uni.fls
+doc/report/build/Plantilla Uni.log
+doc/report/build/Plantilla Uni.out
+doc/report/build/Plantilla Uni.synctex.gz
+!"Plantilla Uni.pdf"
+
 # --- INTELLIJ  ---
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -79,3 +88,4 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
