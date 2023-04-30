@@ -1,3 +1,8 @@
+/**
+ * ALEXANDRU CRISTIAN STOIA
+ * MARC GASPÀ JOVAL
+ * Treasure World
+ */
 package apryraz.tworld;
 
 public class TFState {

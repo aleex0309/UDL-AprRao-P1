@@ -1,4 +1,8 @@
-
+/**
+ * ALEXANDRU CRISTIAN STOIA
+ * MARC GASPÀ JOVAL
+ * Treasure World
+ */
 package apryraz.tworld;
 
 import java.security.cert.TrustAnchor;
